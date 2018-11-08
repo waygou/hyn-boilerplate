@@ -22,7 +22,6 @@ class Tenant
 {
     public function __construct()
     {
-
     }
 
     public static function deleteTenant($fqdn)
@@ -33,7 +32,6 @@ class Tenant
             app(HostnameRepository::class)->delete($hostname, true);
             app(WebsiteRepository::class)->delete($website, true);
         }
-
     }
 
     public static function registerTenant($subdomain, $redirect, $https, $maintenance)
@@ -43,9 +41,15 @@ class Tenant
 
         $hostname = new Hostname;
         $hostname->fqdn = $subdomain;
-        if ($redirect) $hostname->redirect_to = $redirect;
-        if ($https) $hostname->force_https = $https;
-        if ($maintenance) $hostname->under_maintenance_since = Carbon::parse($maintenance)->format('Y-m-d H:i:s');
+        if ($redirect) {
+            $hostname->redirect_to = $redirect;
+        }
+        if ($https) {
+            $hostname->force_https = $https;
+        }
+        if ($maintenance) {
+            $hostname->under_maintenance_since = Carbon::parse($maintenance)->format('Y-m-d H:i:s');
+        }
         $hostname->website()->associate($website);
         app(HostnameRepository::class)->attach($hostname, $website);
 
@@ -55,8 +59,6 @@ class Tenant
     public static function registerAdmin($name, $password, $email)
     {
         $admin = User::create(['name' => $name, 'email' => $email, 'password' => bcrypt($password)]);
-        $admin->guard_name = 'web';
-        $admin->assignRole('admin');
 
         return $admin;
     }
